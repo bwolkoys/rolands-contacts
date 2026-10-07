@@ -1,50 +1,27 @@
-# React + TypeScript + Vite
+# Roland's Contacts
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Mobile-friendly dashboard for the people Roland has met. Data is read live from Airtable
+(base `appwK8xg2CmohFBZc`, table `tbl75efSdpUCLuMQv`, view `viw81nc9CWWErdzCa`).
 
-Currently, two official plugins are available:
+Search by **Name**, **Notes** (any word — every contact whose notes contain it shows up) or **Event**,
+or use **All** to search everything at once. Event chips filter by a specific event. Tap a contact
+to see every field from Airtable, with Call / Text / Email shortcuts.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Setup
 
-## Expanding the ESLint configuration
+1. Create an Airtable personal access token at https://airtable.com/create/tokens
+   - Scope: `data.records:read`
+   - Access: only Roland's contacts base
+2. `cp .env.example .env.local` and paste the token into `AIRTABLE_TOKEN`.
+3. `npm install && npm run dev`
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+The token is only used server-side (`/api/contacts`), so it never ships to the browser.
 
-- Configure the top-level `parserOptions` property like this:
+## Deploying
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+- **Vercel**: works as-is — `api/contacts.js` becomes the `/api/contacts` endpoint.
+  Add `AIRTABLE_TOKEN` in the project's Environment Variables.
+- Other hosts: port `api/contacts.js` to that host's function format; the logic lives in
+  `server/airtable.js`.
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+New columns added in Airtable automatically appear on the contact detail view.
